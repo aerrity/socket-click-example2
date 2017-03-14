@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Socket.io Demo</title>
+      <meta charset="utf-8">
+		<link rel="stylesheet" href="styles.css">
+   </head>
+   <body>
+		 <h1>Socket.io Client->Server->Client Demo</h1>
+		 <p id="clientId"></p>
+		 <p id="buttonCount">This client's button has been clicked 0 times.</p>
+		 <div id="clients"></div>
+
+		 <script src="/socket.io/socket.io.js"></script>
+		 <script>
+			 var socket = io.connect();
+			 
+			 //Once we're connected, display the client ID on the webpage
+			 socket.on('connect', function(){
+			  	document.getElementById("clientId").innerHTML = "This client's ID is " + socket.id;
+			 });
+			 
+			 //store how many times this client's button has been clicked (by any of the clients)
+			 var clicked = 0;
+			 
+			 //what to do when the server tells this client their button was clicked by any of the clients
+			 socket.on('youWereClicked', function(){
+				 //console.log('clicked');
+				 clicked++;
+				 document.getElementById("buttonCount").innerHTML = "This client's button has been clicked " + clicked + ' times.';
+			 });
+			 
+			 //Add a button for each client that is connected to the server
+			 socket.on('clientList', function(data){
+				 document.getElementById("clients").innerHTML = "";
+				 for(var i = 0; i < data.length; i++){
+					 //console.log(data[i]);
+					 var btn = document.createElement("BUTTON"); 
+					 btn.onclick = clientButtonClicked;
+					 var textnode = document.createTextNode(data[i]);
+					 btn.appendChild(textnode);
+					 document.getElementById("clients").appendChild(btn);
+				 }
+			 });
+			 
+			 //When any of the client buttons on this page are clicked
+			 function clientButtonClicked(){
+				 //Tell the server this button was clicked and send the client id along with the message
+				 socket.emit('clientClicked', this.innerHTML);
+			 }
+		</script>
+   </body>
+</html>
