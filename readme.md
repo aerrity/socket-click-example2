@@ -78,7 +78,7 @@ Each client in Socket.io has a unique ID. So if there were 3 clients connected t
 
 
 
-##Client-side - Part 1 - List of clients
+## Client-side - Part 1 - List of clients
 
 Create an `index.html` file in a `public` folder in your project folder containing:
 
